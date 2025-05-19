@@ -1,0 +1,32 @@
+@model WorkoutDiaryMVC.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Workout Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4">Workout Dashboard</h2>
+
+<div class="d-flex justify-content-between mb-3">
+    <a class="btn btn-primary" href="/Workout/Create">Add Workout</a>
+</div>
+
+<h3 class="h5 mb-3">Upcoming Workouts</h3>
+<div class="row">
+    @foreach (var w in Model.UpcomingWorkouts)
+    {
+        <div class="col-md-6 col-lg-4">
+            <partial name="_WorkoutCard" model="w" />
+        </div>
+    }
+</div>
+
+<h3 class="h5 mt-5 mb-3">Recent Workouts</h3>
+<div class="row">
+    @foreach (var w in Model.RecentWorkouts)
+    {
+        <div class="col-md-6 col-lg-4">
+            <partial name="_WorkoutCard" model="w" />
+        </div>
+    }
+</div>

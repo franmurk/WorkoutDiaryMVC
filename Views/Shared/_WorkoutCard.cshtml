@@ -1,0 +1,13 @@
+﻿@model WorkoutDiaryMVC.Models.Workout
+
+<div class="card h-100 mb-3">
+    <div class="card-body">
+        <h5 class="card-title fw-bold">@Model.Name</h5>
+        <p class="card-text text-muted">@Model.Date.ToString("MMM dd, yyyy")</p>
+        <p class="card-text">@Model.Notes</p>
+    </div>
+    <div class="card-footer d-flex justify-content-between">
+        <a href="/Workout/Edit/@Model.Id" class="btn btn-sm btn-warning">Edit</a>
+        <a href="/Workout/Delete/@Model.Id" class="btn btn-sm btn-danger">Delete</a>
+    </div>
+</div>

@@ -1,0 +1,21 @@
+
+@model WorkoutDiaryMVC.Models.Workout
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>@(Model.Id == 0 ? "Add Workout" : "Edit Workout")</h2>
+<form asp-action="@(Model.Id == 0 ? "Create" : "Edit")" method="post">
+    <div class="mb-2">
+        <label class="form-label">Name</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Notes</label>
+        <textarea asp-for="Notes" class="form-control"></textarea>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Date</label>
+        <input asp-for="Date" type="date" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+</form>

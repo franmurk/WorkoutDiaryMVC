@@ -1,0 +1,78 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #f9f9fb;
+    color: #1a1a1a;
+}
+
+.container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid #ddd;
+    background-color: white;
+}
+
+    .navbar a {
+        margin-left: 16px;
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+    }
+
+        .navbar a:hover {
+            color: #5f3dc4;
+        }
+
+.btn {
+    padding: 8px 16px;
+    background-color: #5f3dc4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+}
+
+    .btn:hover {
+        background-color: #6741d9;
+    }
+
+/* Card layout for dashboard and workouts */
+.card {
+    background-color: white;
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+    .card h2 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    .card p {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+/* Grid layout for workout cards */
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
