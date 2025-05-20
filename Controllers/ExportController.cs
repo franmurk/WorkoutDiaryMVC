@@ -48,17 +48,41 @@ namespace WorkoutDiaryMVC.Controllers
                             col.Item().Text($"Date: {workout.Date:dd.MM.yyyy}")
                                 .FontSize(10).Italic();
 
-                            // Trajanje
+                            col.Item().PaddingBottom(5); 
+                            //trajanje
                             col.Item().Text($"Duration: {workout.DurationInMinutes} min")
                                 .FontSize(10);
 
-                            // Bilješke ako ih ima
-                            if (!string.IsNullOrWhiteSpace(workout.Notes))
+                            col.Item().PaddingBottom(5);
+
+                            // Description
+                            if (!string.IsNullOrEmpty(workout.Notes)) // dopušta i prazan razmak/enter
                             {
-                                col.Item().Text(workout.Notes).FontSize(10);
+                                var lines = workout.Notes
+                                    .Replace("è", "c").Replace("æ", "c")
+                                    .Replace("ž", "z").Replace("š", "s")
+                                    .Replace("ð", "d")
+                                    .Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
+
+                                bool hasVisibleContent = false;
+
+                                foreach (var line in lines)
+                                {
+                                    if (string.IsNullOrWhiteSpace(line))
+                                    {
+                                        col.Item().PaddingVertical(5); // prazan red
+                                    }
+                                    else
+                                    {
+                                        hasVisibleContent = true;
+                                        col.Item().Text(line.Trim()).FontSize(10);
+                                    }
+                                }
                             }
 
-                            col.Item().PaddingBottom(8);
+
+
+                                col.Item().PaddingBottom(8);
                         }
 
                     });
