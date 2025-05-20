@@ -16,6 +16,8 @@ namespace WorkoutDiaryMVC.Models
         [DataType(DataType.Date)]
         public required DateTime Date { get; set; }
 
+        public int DurationInMinutes { get; set; }
+
         public string WorkoutType { get; set; } = "Other";  // Default je "Other"
     }
 }

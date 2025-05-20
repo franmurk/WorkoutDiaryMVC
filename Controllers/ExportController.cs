@@ -37,13 +37,22 @@ namespace WorkoutDiaryMVC.Controllers
                             .FontSize(10).Italic();
 
                         col.Item().PaddingVertical(10);
-
                         int i = 1;
                         foreach (var workout in workouts)
                         {
-                            col.Item().Text($"{i++}. {workout.Date:dd.MM.yyyy} — {workout.Name} ({workout.WorkoutType})")
+                            // Naslov + tip
+                            col.Item().Text($"{i++}. {workout.Name} ({workout.WorkoutType})")
                                 .FontSize(12).Bold();
 
+                            // Datum
+                            col.Item().Text($"Date: {workout.Date:dd.MM.yyyy}")
+                                .FontSize(10).Italic();
+
+                            // Trajanje
+                            col.Item().Text($"Duration: {workout.DurationInMinutes} min")
+                                .FontSize(10);
+
+                            // Bilješke ako ih ima
                             if (!string.IsNullOrWhiteSpace(workout.Notes))
                             {
                                 col.Item().Text(workout.Notes).FontSize(10);
@@ -51,6 +60,7 @@ namespace WorkoutDiaryMVC.Controllers
 
                             col.Item().PaddingBottom(8);
                         }
+
                     });
                 });
             });

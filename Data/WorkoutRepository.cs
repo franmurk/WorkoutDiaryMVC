@@ -27,6 +27,8 @@ namespace WorkoutDiaryMVC.Data
                 existing.Notes = workout.Notes;
                 existing.Date = workout.Date;
                 existing.WorkoutType = workout.WorkoutType;
+                existing.DurationInMinutes = workout.DurationInMinutes;
+
 
             }
         }

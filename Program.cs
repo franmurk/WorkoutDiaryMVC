@@ -15,7 +15,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Account/Login";
     });
 
-// Registracija singletona
 builder.Services.AddSingleton<WorkoutRepository>();
 
 var app = builder.Build();

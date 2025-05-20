@@ -5,9 +5,7 @@
     <title>@ViewData["Title"] - Workout Diary</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-
     <link href="~/css/site.css" rel="stylesheet" />
 </head>
 <body style="font-family: 'Inter', sans-serif;" class="bg-light text-dark">
@@ -20,25 +18,40 @@
             <div class="collapse navbar-collapse justify-content-end">
                 <ul class="navbar-nav gap-3 align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link fw-medium" href="/">Dashboard</a>
+                        <a class="nav-link fw-medium d-flex align-items-center gap-1" href="/">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M0 0h1v16H0V0zm15 8h-4v8h4V8zM10 4H6v12h4V4zM5 11H1v5h4v-5z" />
+                            </svg>
+                            Dashboard
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link fw-medium" href="/Calendar">Calendar</a>
+                        <a class="nav-link fw-medium d-flex align-items-center gap-1" href="/Calendar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2
+                 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2ZM5
+                 20V9h14v11H5Zm14-13H5V6h14v1Z" />
+                            </svg>
+                            Calendar
+                        </a>
+
                     </li>
-                   
+
                     @if (User.Identity?.IsAuthenticated ?? false)
                     {
                         <li class="nav-item">
-                            <a class="nav-link" href="/Account/Logout">Logout</a>
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Account/Login">Login</a>
+                            <span class="nav-link disabled">👤 @User.Identity.Name</span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/Account/Register">Register</a>
+                            <a class="nav-link d-flex align-items-center gap-1" href="/Account/Logout">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M16 13v-2H7V8l-5 4 5 4v-3h9Zm4-11H8a2 2 0 0 0-2
+                     2v5h2V4h12v16H8v-5H6v5a2 2 0 0 0 2 2h12a2 2 0 0
+                     0 2-2V4a2 2 0 0 0-2-2Z" />
+                                </svg>
+                                Logout
+                            </a>
+
                         </li>
                     }
                 </ul>

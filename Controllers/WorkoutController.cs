@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using WorkoutDiaryMVC.Data;
-using WorkoutDiaryMVC.Models;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using WorkoutDiaryMVC.Data;
+using WorkoutDiaryMVC.Models;
 
 namespace WorkoutDiaryMVC.Controllers
 {
+    [Authorize]
     public class WorkoutController : Controller
     {
         private readonly WorkoutRepository _repo;
@@ -20,14 +22,16 @@ namespace WorkoutDiaryMVC.Controllers
             var today = DateTime.Today;
             var all = _repo.GetAll();
             ViewData["WorkoutCount"] = all.Count;
+            ViewData["TotalDuration"] = all.Sum(w => w.DurationInMinutes);
+            ViewData["AverageDuration"] = all.Any() ? (int)all.Average(w => w.DurationInMinutes) : 0;
+
 
             var typeCounts = all
-    .GroupBy(w => w.WorkoutType)
-    .Select(g => new { Type = g.Key, Count = g.Count() })
-    .ToList();
+                .GroupBy(w => w.WorkoutType)
+                .Select(g => new { Type = g.Key, Count = g.Count() })
+                .ToList();
 
             ViewData["WorkoutTypes"] = typeCounts;
-
 
             var upcoming = all
                 .Where(w => w.Date > today)
@@ -47,11 +51,21 @@ namespace WorkoutDiaryMVC.Controllers
                 RecentWorkouts = recent
             };
 
-
             return View(model);
         }
 
-        public IActionResult Create() => View();
+        public IActionResult Create()
+        {
+            return View(new Workout
+            {
+                Name = "",
+                Notes = "",
+                Date = DateTime.Today,
+                DurationInMinutes = 30,
+                WorkoutType = "Other"
+            });
+        }
+
 
         [HttpPost]
         public IActionResult Create(Workout workout)

@@ -29,9 +29,12 @@ body {
         color: #333;
         font-weight: 500;
     }
+    .navbar .nav-link {
+        transition: transform 0.2s ease-in-out;
+    }
 
-        .navbar a:hover {
-            color: #5f3dc4;
+        .navbar .nav-link:hover {
+            transform: translateY(-2px);
         }
 
 .btn {
@@ -44,9 +47,11 @@ body {
     font-weight: 500;
     text-decoration: none;
     display: inline-block;
+    transition: transform 0.2s ease-in-out;
 }
 
     .btn:hover {
+        transform: translateY(-2px);
         background-color: #6741d9;
     }
 
@@ -76,3 +81,38 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
 }
+
+.card-clickable {
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+    .card-clickable:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+        background-color: #fdfdfd;
+    }
+
+/* Custom style for range slider (duration) */
+input.form-range::-webkit-slider-thumb {
+    background: #5f3dc4 !important;
+    border: 2px solid white;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -6px;
+}
+
+input.form-range::-webkit-slider-runnable-track {
+    background: #cbb2ff !important;
+    height: 6px;
+    border-radius: 4px;
+}
+
+
+
+
+
+

@@ -26,6 +26,15 @@
     </div>
 
     <div class="mb-4">
+        <label class="form-label">Duration (minutes): <span id="durationValue">@Model.DurationInMinutes</span></label>
+        <input type="range" name="DurationInMinutes" class="form-range" id="durationSlider"
+               min="1" max="300" value="@Model.DurationInMinutes" />
+        <div class="form-text">Set the duration between 1 and 300 minutes</div>
+    </div>
+
+
+
+    <div class="mb-4">
         <label class="form-label">Workout Type</label>
         <select id="workoutTypeSelect" name="WorkoutType" class="form-select">
             <option value="Cardio">Cardio</option>
@@ -49,10 +58,18 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        const slider = document.getElementById('durationSlider');
+        const output = document.getElementById('durationValue');
         const typeSelect = document.getElementById('workoutTypeSelect');
         const customDiv = document.getElementById('customTypeDiv');
         const customInput = document.getElementById('customTypeInput');
 
+            if (slider && output) {
+            output.textContent = slider.value;
+            slider.addEventListener('input', () => {
+                output.textContent = slider.value;
+            });
+        }
         typeSelect.addEventListener('change', function () {
             if (this.value === 'Other') {
                 customDiv.style.display = 'block';
