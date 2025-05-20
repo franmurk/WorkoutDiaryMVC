@@ -1,21 +1,96 @@
-
 @model WorkoutDiaryMVC.Models.Workout
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var knownTypes = new[] { "Cardio", "Strength", "Flexibility" };
+    var selectedType = Model.WorkoutType;
+    var isCustom = !knownTypes.Contains(selectedType);
+    var options = new List<string> { "Cardio", "Strength", "Flexibility", "Other" };
 }
-<h2>@(Model.Id == 0 ? "Add Workout" : "Edit Workout")</h2>
-<form asp-action="@(Model.Id == 0 ? "Create" : "Edit")" method="post">
-    <div class="mb-2">
+
+<h2>Edit Workout</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="All" class="text-danger mb-2"></div>
+
+    <div class="mb-3">
         <label class="form-label">Name</label>
         <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
     </div>
-    <div class="mb-2">
+
+    <div class="mb-3">
         <label class="form-label">Notes</label>
         <textarea asp-for="Notes" class="form-control"></textarea>
+        <span asp-validation-for="Notes" class="text-danger"></span>
     </div>
-    <div class="mb-2">
+
+    <div class="mb-3">
         <label class="form-label">Date</label>
         <input asp-for="Date" type="date" class="form-control" />
+        <span asp-validation-for="Date" class="text-danger"></span>
     </div>
+
+    <div class="mb-3">
+        <label class="form-label">Workout Type</label>
+        <select id="workoutTypeSelect" class="form-select">
+            @foreach (var opt in options)
+            {
+                var selected = (opt == selectedType || (opt == "Other" && isCustom)) ? "selected" : "";
+                @Html.Raw($"<option value=\"{opt}\" {selected}>{opt}</option>")
+            }
+        </select>
+    </div>
+
+
+    <div class="mb-3" id="customTypeDiv" style="display: none;">
+        <label class="form-label">Custom Type</label>
+        <input type="text" id="customTypeInput" class="form-control" />
+    </div>
+
+    <input type="hidden" id="WorkoutType" name="WorkoutType" value="@Model.WorkoutType" />
+
+
     <button type="submit" class="btn btn-success">Save</button>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const typeSelect = document.getElementById('workoutTypeSelect');
+        const customDiv = document.getElementById('customTypeDiv');
+        const customInput = document.getElementById('customTypeInput');
+        const hiddenInput = document.getElementById('WorkoutType');
+
+        function updateInputs() {
+            const selected = typeSelect.value;
+            if (selected === 'Other') {
+                customDiv.style.display = 'block';
+                customInput.setAttribute('name', 'WorkoutType');
+                hiddenInput.removeAttribute('name');
+
+                const knownTypes = ['Cardio', 'Strength', 'Flexibility'];
+                if (!knownTypes.includes(hiddenInput.value)) {
+                    customInput.value = hiddenInput.value;
+                } else {
+                    customInput.value = '';
+                }
+            } else {
+                customDiv.style.display = 'none';
+                hiddenInput.value = selected;
+                hiddenInput.setAttribute('name', 'WorkoutType');
+                customInput.removeAttribute('name');
+            }
+        }
+
+        typeSelect.addEventListener('change', updateInputs);
+        document.addEventListener('DOMContentLoaded', updateInputs);
+
+        document.querySelector('form').addEventListener('submit', function () {
+            if (typeSelect.value === 'Other') {
+                hiddenInput.value = customInput.value;
+            }
+        });
+    </script>
+}

@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WorkoutDiaryMVC.Data;
 using WorkoutDiaryMVC.Models;
 using System;
@@ -19,6 +19,15 @@ namespace WorkoutDiaryMVC.Controllers
         {
             var today = DateTime.Today;
             var all = _repo.GetAll();
+            ViewData["WorkoutCount"] = all.Count;
+
+            var typeCounts = all
+    .GroupBy(w => w.WorkoutType)
+    .Select(g => new { Type = g.Key, Count = g.Count() })
+    .ToList();
+
+            ViewData["WorkoutTypes"] = typeCounts;
+
 
             var upcoming = all
                 .Where(w => w.Date > today)
@@ -37,6 +46,7 @@ namespace WorkoutDiaryMVC.Controllers
                 UpcomingWorkouts = upcoming,
                 RecentWorkouts = recent
             };
+
 
             return View(model);
         }
@@ -68,6 +78,7 @@ namespace WorkoutDiaryMVC.Controllers
                 _repo.Update(workout);
                 return RedirectToAction("Index");
             }
+
             return View(workout);
         }
 
@@ -76,5 +87,34 @@ namespace WorkoutDiaryMVC.Controllers
             _repo.Delete(id);
             return RedirectToAction("Index");
         }
+
+        public IActionResult Calendar()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public JsonResult GetEvents()
+        {
+            var workouts = _repo.GetAll();
+
+            var events = workouts.Select(w => new
+            {
+                title = w.Name,
+                start = w.Date.ToString("yyyy-MM-dd"),
+                url = Url.Action("Edit", new { id = w.Id }),
+                color = GetColorByType(w.WorkoutType)
+            });
+
+            return Json(events);
+        }
+
+        private string GetColorByType(string type) => type?.ToLower() switch
+        {
+            "cardio" => "#007bff",      // plava
+            "strength" => "#dc3545",    // crvena
+            "flexibility" => "#28a745", // zelena
+            _ => "#6f42c1"              // ljubičasta za Other
+        };
     }
 }

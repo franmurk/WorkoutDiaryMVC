@@ -8,17 +8,6 @@ namespace WorkoutDiaryMVC.Data
         private readonly List<Workout> _workouts = new();
         private int _idCounter = 1;
 
-        public WorkoutRepository()
-        {
-
-            _workouts.AddRange(new[]
-            {
-
-        new Workout { Id = _idCounter++, Name = "Push Day", Date = DateTime.Today, Notes = "Chest and Triceps" },
-        new Workout { Id = _idCounter++, Name = "Pull Day", Date = DateTime.Today.AddDays(3), Notes = "Back and Biceps" }
-    });
-        }
-
         public List<Workout> GetAll() => _workouts;
 
         public Workout? GetById(int id) => _workouts.FirstOrDefault(w => w.Id == id);
@@ -37,6 +26,8 @@ namespace WorkoutDiaryMVC.Data
                 existing.Name = workout.Name;
                 existing.Notes = workout.Notes;
                 existing.Date = workout.Date;
+                existing.WorkoutType = workout.WorkoutType;
+
             }
         }
 

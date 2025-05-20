@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Workout Calendar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4">Workout Calendar</h2>
+
+<div id="calendar"></div>
+
+<div class="mt-4">
+    <h5>Legenda</h5>
+    <ul class="list-inline">
+        <li class="list-inline-item">
+            <span class="badge" style="background-color: #007bff;">Cardio</span>
+        </li>
+        <li class="list-inline-item">
+            <span class="badge" style="background-color: #dc3545;">Strength</span>
+        </li>
+        <li class="list-inline-item">
+            <span class="badge" style="background-color: #28a745;">Flexibility</span>
+        </li>
+        <li class="list-inline-item">
+            <span class="badge" style="background-color: #6f42c1;">Other</span>
+        </li>
+    </ul>
+</div>
+
+@section Scripts {
+    <!-- FullCalendar CSS & JS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: 650,
+                events: '/Workout/GetEvents'
+            });
+            calendar.render();
+        });
+    </script>
+}

@@ -1,33 +1,73 @@
 @model WorkoutDiaryMVC.Models.Workout
 
 @{
-    ViewData["Title"] = "Add Workout";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container">
-    <h2 class="mb-4">Add New Workout</h2>
+<h2 class="fw-bold mb-4">Add New Workout</h2>
+<p class="text-muted mb-4">Create a new workout entry for your diary</p>
 
-    <form asp-action="Create" method="post">
-        <div class="mb-3">
-            <label asp-for="Name" class="form-label">Name</label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
+<form method="post" asp-action="Create">
 
-        <div class="mb-3">
-            <label asp-for="Notes" class="form-label">Notes</label>
-            <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
-            <span asp-validation-for="Notes" class="text-danger"></span>
-        </div>
+    <div class="mb-4">
+        <label class="form-label">Workout Title</label>
+        <input type="text" name="Name" class="form-control" placeholder="Enter workout title" />
+        <div class="form-text">Give your workout a descriptive name (max 100 characters)</div>
+    </div>
 
-        <div class="mb-3">
-            <label asp-for="Date" class="form-label">Date</label>
-            <input asp-for="Date" type="date" class="form-control" />
-            <span asp-validation-for="Date" class="text-danger"></span>
-        </div>
+    <div class="mb-4">
+        <label class="form-label">Description</label>
+        <textarea name="Notes" class="form-control" rows="3" placeholder="Describe your workout in detail"></textarea>
+    </div>
 
-        <button type="submit" class="btn btn-success">Save Workout</button>
-        <a href="/Workout" class="btn btn-secondary ms-2">Cancel</a>
-    </form>
-</div>
+    <div class="mb-4">
+        <label class="form-label">Date</label>
+        <input type="date" name="Date" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+    </div>
+
+    <div class="mb-4">
+        <label class="form-label">Workout Type</label>
+        <select id="workoutTypeSelect" name="WorkoutType" class="form-select">
+            <option value="Cardio">Cardio</option>
+            <option value="Strength">Strength</option>
+            <option value="Flexibility">Flexibility</option>
+            <option value="Other">Other</option>
+        </select>
+    </div>
+
+    <div class="mb-4" id="customTypeDiv" style="display: none;">
+        <label class="form-label">Custom Type</label>
+        <input type="text" id="customTypeInput" class="form-control" />
+    </div>
+
+    <div class="d-flex gap-2">
+        <a href="/Workout/Index" class="btn btn-outline-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const typeSelect = document.getElementById('workoutTypeSelect');
+        const customDiv = document.getElementById('customTypeDiv');
+        const customInput = document.getElementById('customTypeInput');
+
+        typeSelect.addEventListener('change', function () {
+            if (this.value === 'Other') {
+                customDiv.style.display = 'block';
+                customInput.setAttribute('name', 'WorkoutType');
+            } else {
+                customDiv.style.display = 'none';
+                customInput.removeAttribute('name');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeSelect.value === 'Other') {
+                customDiv.style.display = 'block';
+                customInput.setAttribute('name', 'WorkoutType');
+            }
+        });
+    </script>
+}

@@ -1,0 +1,32 @@
+﻿@model List<WorkoutDiaryMVC.Models.PersonalBest>
+
+@{
+    ViewData["Title"] = "Personal Bests";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="fw-bold mb-4">Personal Best Records</h2>
+
+<table class="table table-hover table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Exercise</th>
+            <th>Max Weight (kg)</th>
+            <th>Reps</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var best in Model)
+        {
+            <tr>
+                <td>@best.Exercise</td>
+                <td>@best.MaxWeight</td>
+                <td>@best.Reps</td>
+                <td>@best.Date.ToString("dd.MM.yyyy")</td>
+            </tr>
+        }
+        <a href="/PersonalBest/Create" class="btn btn-primary mb-3">+ Add Personal Best</a>
+
+    </tbody>
+</table>

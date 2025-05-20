@@ -28,16 +28,28 @@ namespace WorkoutDiaryMVC.Controllers
 
                     page.Content().Column(col =>
                     {
-                        col.Item().AlignCenter().Text("Workout Diary Report").FontSize(20).Bold();
-                        col.Item().AlignRight().Text($"Generated on: {DateTime.Now}").FontSize(10);
+                        // Naslov
+                        col.Item().AlignCenter().Text("Workout Report")
+                            .FontSize(20).Bold();
+
+                        // Datum generiranja
+                        col.Item().AlignRight().Text($"Generated on: {DateTime.Now:dd.MM.yyyy HH:mm}")
+                            .FontSize(10).Italic();
+
                         col.Item().PaddingVertical(10);
 
+                        int i = 1;
                         foreach (var workout in workouts)
                         {
-                            col.Item().Text($"{workout.Date.ToShortDateString()} - {workout.Name}")
+                            col.Item().Text($"{i++}. {workout.Date:dd.MM.yyyy} — {workout.Name} ({workout.WorkoutType})")
                                 .FontSize(12).Bold();
-                            col.Item().Text(workout.Notes).FontSize(10);
-                            col.Item().PaddingBottom(5);
+
+                            if (!string.IsNullOrWhiteSpace(workout.Notes))
+                            {
+                                col.Item().Text(workout.Notes).FontSize(10);
+                            }
+
+                            col.Item().PaddingBottom(8);
                         }
                     });
                 });

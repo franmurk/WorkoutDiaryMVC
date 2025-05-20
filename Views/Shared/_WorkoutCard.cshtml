@@ -5,9 +5,16 @@
         <h5 class="card-title fw-bold">@Model.Name</h5>
         <p class="card-text text-muted">@Model.Date.ToString("MMM dd, yyyy")</p>
         <p class="card-text">@Model.Notes</p>
+        <p class="card-text">
+            <strong>Type:</strong> @Model.WorkoutType
+        </p>
+
     </div>
     <div class="card-footer d-flex justify-content-between">
-        <a href="/Workout/Edit/@Model.Id" class="btn btn-sm btn-warning">Edit</a>
-        <a href="/Workout/Delete/@Model.Id" class="btn btn-sm btn-danger">Delete</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-warning">Edit</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-sm btn-danger"
+           onclick="return confirm('Are you sure you want to delete this workout?');">
+            Delete
+        </a>
     </div>
 </div>
