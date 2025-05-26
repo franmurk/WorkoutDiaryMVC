@@ -1,0 +1,43 @@
+﻿@model WorkoutDiaryMVC.Models.PersonalBest
+
+@{
+    ViewData["Title"] = "Edit Personal Best";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="fw-bold mb-4">Edit Personal Best</h2>
+
+<form asp-action="Edit" method="post" class="mb-5">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label class="form-label">Exercise</label>
+        <input asp-for="Exercise" class="form-control" />
+        <span asp-validation-for="Exercise" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Max Weight (kg)</label>
+        <input asp-for="MaxWeight" type="number" class="form-control" />
+        <span asp-validation-for="MaxWeight" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Reps</label>
+        <input asp-for="Reps" type="number" class="form-control" />
+        <span asp-validation-for="Reps" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Date</label>
+        <input asp-for="Date" type="date" class="form-control" />
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a href="/PersonalBest/Records" class="btn btn-secondary ms-2">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

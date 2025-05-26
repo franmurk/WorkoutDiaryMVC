@@ -21,6 +21,7 @@ namespace WorkoutDiaryMVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                pb.Id = _records.Any() ? _records.Max(p => p.Id) + 1 : 1;
                 _records.Add(pb);
                 return RedirectToAction("Records");
             }
@@ -28,6 +29,44 @@ namespace WorkoutDiaryMVC.Controllers
             return View(pb);
         }
 
+        public IActionResult Edit(int id)
+        {
+            var record = _records.FirstOrDefault(p => p.Id == id);
+            if (record == null) return NotFound();
+
+            return View(record);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(PersonalBest updated)
+        {
+            var existing = _records.FirstOrDefault(p => p.Id == updated.Id);
+            if (existing == null) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                existing.Exercise = updated.Exercise;
+                existing.MaxWeight = updated.MaxWeight;
+                existing.Reps = updated.Reps;
+                existing.Date = updated.Date;
+
+                return RedirectToAction("Records");
+            }
+
+            return View(updated);
+        }
+
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var record = _records.FirstOrDefault(p => p.Id == id);
+            if (record != null)
+            {
+                _records.Remove(record);
+            }
+
+            return RedirectToAction("Records");
+        }
 
     }
 }
