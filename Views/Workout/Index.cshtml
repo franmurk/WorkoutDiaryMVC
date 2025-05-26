@@ -110,7 +110,14 @@ else
 }
 
 
-<h3 class="h5 mt-5 mb-3 fw-bold fs-3">Recent Workouts</h3>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="fw-bold fs-3 mb-0">Recent Workouts</h3>
+    <a href="/Workout/All" class="text-decoration-none fw-bold">
+        View All <span class="ms-1">&rarr;</span>
+    </a>
+
+</div>
+
 <div class="row">
     @foreach (var w in Model.RecentWorkouts)
     {
@@ -138,7 +145,7 @@ else
                 {
                         { "cardio", "#007bff" },
                         { "strength", "#dc3545" },
-                        { "flexibility", "#28a745" }
+                        { "endurance", "#28a745" }
                 };
 
                 foreach (var t in types)

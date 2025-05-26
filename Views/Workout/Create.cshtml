@@ -36,10 +36,10 @@
 
     <div class="mb-4">
         <label class="form-label">Workout Type</label>
-        <select id="workoutTypeSelect" name="WorkoutType" class="form-select">
+        <select id="workoutTypeSelect" class="form-select">
             <option value="Cardio">Cardio</option>
             <option value="Strength">Strength</option>
-            <option value="Flexibility">Flexibility</option>
+            <option value="Endurance">Endurance</option>
             <option value="Other">Other</option>
         </select>
     </div>
@@ -64,27 +64,30 @@
         const customDiv = document.getElementById('customTypeDiv');
         const customInput = document.getElementById('customTypeInput');
 
-            if (slider && output) {
+        if (slider && output) {
             output.textContent = slider.value;
             slider.addEventListener('input', () => {
                 output.textContent = slider.value;
             });
         }
-        typeSelect.addEventListener('change', function () {
-            if (this.value === 'Other') {
-                customDiv.style.display = 'block';
-                customInput.setAttribute('name', 'WorkoutType');
-            } else {
-                customDiv.style.display = 'none';
-                customInput.removeAttribute('name');
-            }
-        });
 
-        document.addEventListener('DOMContentLoaded', function () {
+        function toggleCustomInput() {
             if (typeSelect.value === 'Other') {
                 customDiv.style.display = 'block';
                 customInput.setAttribute('name', 'WorkoutType');
+                typeSelect.removeAttribute('name');
+            } else {
+                customDiv.style.display = 'none';
+                customInput.removeAttribute('name');
+                typeSelect.setAttribute('name', 'WorkoutType');
             }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleCustomInput();
+            typeSelect.addEventListener('change', toggleCustomInput);
         });
     </script>
 }
+
+

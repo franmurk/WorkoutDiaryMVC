@@ -78,6 +78,7 @@ namespace WorkoutDiaryMVC.Controllers
             return View(workout);
         }
 
+
         public IActionResult Edit(int id)
         {
             var workout = _repo.GetById(id);
@@ -123,11 +124,18 @@ namespace WorkoutDiaryMVC.Controllers
             return Json(events);
         }
 
+        public IActionResult All()
+        {
+            var allWorkouts = _repo.GetAll();
+            return View(allWorkouts);
+        }
+
+
         private string GetColorByType(string type) => type?.ToLower() switch
         {
             "cardio" => "#007bff",      // plava
             "strength" => "#dc3545",    // crvena
-            "flexibility" => "#28a745", // zelena
+            "endurance" => "#28a745", // zelena
             _ => "#6f42c1"              // ljubičasta za Other
         };
     }

@@ -10,11 +10,16 @@
         </p>
         <p><span class="fw-bold">Duration:</span> @Model.DurationInMinutes min</p>
     </div>
+   
+
+
     <div class="card-footer d-flex justify-content-between">
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-warning">Edit</a>
         <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-sm btn-danger"
            onclick="return confirm('Are you sure you want to delete this workout?');">
             Delete
         </a>
+        
+       
     </div>
 </div>

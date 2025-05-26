@@ -1,0 +1,17 @@
+﻿@model IEnumerable<WorkoutDiaryMVC.Models.Workout>
+
+@{
+    ViewData["Title"] = "All Workouts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="fw-bold mb-4">All Workouts</h2>
+
+<div class="row">
+    @foreach (var workout in Model)
+    {
+        <div class="col-md-6 col-lg-4 mb-3">
+            @await Html.PartialAsync("~/Views/Shared/_WorkoutCard.cshtml", workout)
+        </div>
+    }
+</div>

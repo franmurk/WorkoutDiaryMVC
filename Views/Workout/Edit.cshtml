@@ -2,10 +2,10 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var knownTypes = new[] { "Cardio", "Strength", "Flexibility" };
+    var knownTypes = new[] { "Cardio", "Strength", "Endurance" };
     var selectedType = Model.WorkoutType;
     var isCustom = !knownTypes.Contains(selectedType);
-    var options = new List<string> { "Cardio", "Strength", "Flexibility", "Other" };
+    var options = new List<string> { "Cardio", "Strength", "Endurance", "Other" };
 }
 
 <h2>Edit Workout</h2>

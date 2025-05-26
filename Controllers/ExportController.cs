@@ -33,7 +33,7 @@ namespace WorkoutDiaryMVC.Controllers
                             .FontSize(20).Bold();
 
                         // Datum generiranja
-                        col.Item().AlignRight().Text($"Generated on: {DateTime.Now:dd.MM.yyyy HH:mm}")
+                        col.Item().AlignRight().Text($"{DateTime.Now:dd.MM.yyyy HH:mm}")
                             .FontSize(10).Italic();
 
                         col.Item().PaddingVertical(10);
@@ -95,5 +95,6 @@ namespace WorkoutDiaryMVC.Controllers
 
             return File(pdfStream, "application/pdf", "WorkoutDiary.pdf");
         }
+
     }
 }
