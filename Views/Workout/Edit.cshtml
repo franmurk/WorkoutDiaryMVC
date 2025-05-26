@@ -38,11 +38,9 @@
         <span asp-validation-for="DurationInMinutes" class="text-danger"></span>
     </div>
 
-
-
     <div class="mb-3">
         <label class="form-label">Workout Type</label>
-        <select id="workoutTypeSelect" name="WorkoutType" class="form-select">
+        <select id="workoutTypeSelect" class="form-select">
             @foreach (var opt in options)
             {
                 var selected = (opt == selectedType || (opt == "Other" && isCustom)) ? "selected" : "";
@@ -51,14 +49,12 @@
         </select>
     </div>
 
-
-    <div class="mb-3" id="customTypeDiv" style="display: none;">
+    <div class="mb-3" id="customTypeDiv" style="display: @(isCustom ? "block" : "none")">
         <label class="form-label">Custom Type</label>
-        <input type="text" id="customTypeInput" class="form-control" />
+        <input type="text" id="customTypeInput" class="form-control" value="@(isCustom ? Model.WorkoutType : "")" name="WorkoutType" />
     </div>
 
-    <input type="hidden" id="WorkoutType" name="WorkoutType" value="@Model.WorkoutType" />
-
+    <input type="hidden" id="hiddenWorkoutType" value="@Model.WorkoutType" @(isCustom ? "" : "name=\"WorkoutType\"") />
 
     <button type="submit" class="btn btn-success">Save</button>
 </form>
@@ -71,27 +67,21 @@
         const typeSelect = document.getElementById('workoutTypeSelect');
         const customDiv = document.getElementById('customTypeDiv');
         const customInput = document.getElementById('customTypeInput');
-        const hiddenInput = document.getElementById('WorkoutType');
+        const hiddenInput = document.getElementById('hiddenWorkoutType');
 
-            if (slider && output) {
+        if (slider && output) {
             output.textContent = slider.value;
             slider.addEventListener('input', () => {
                 output.textContent = slider.value;
             });
         }
+
         function updateInputs() {
             const selected = typeSelect.value;
             if (selected === 'Other') {
                 customDiv.style.display = 'block';
                 customInput.setAttribute('name', 'WorkoutType');
                 hiddenInput.removeAttribute('name');
-
-                const knownTypes = ['Cardio', 'Strength', 'Flexibility'];
-                if (!knownTypes.includes(hiddenInput.value)) {
-                    customInput.value = hiddenInput.value;
-                } else {
-                    customInput.value = '';
-                }
             } else {
                 customDiv.style.display = 'none';
                 hiddenInput.value = selected;
