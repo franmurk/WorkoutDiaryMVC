@@ -1,6 +1,14 @@
 ﻿@model WorkoutDiaryMVC.Models.Workout
 
-<div class="card h-100 mb-3">
+<div class="card h-100 mb-3" style="position: relative; overflow: visible;">
+    <a asp-controller="Export" asp-action="PdfSingle" asp-route-id="@Model.Id"
+       title="Export this workout to PDF"
+       style="position: absolute; top: 10px; right: 16px; width: 24px; height: 24px; color: #d9534f; z-index: 1050;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill=#5f3dc4 viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+            <path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6H6zM7 4h7v5h5v11H7V4zm2 9h6v2H9v-2zm0 4h6v2H9v-2z" />
+        </svg>
+    </a>
+
     <div class="card-body">
         <h5 class="card-title fw-bold">@Model.Name</h5>
         <p class="card-text text-muted">@Model.Date.ToString("MMM dd, yyyy")</p>
@@ -10,8 +18,6 @@
         </p>
         <p><span class="fw-bold">Duration:</span> @Model.DurationInMinutes min</p>
     </div>
-   
-
 
     <div class="card-footer d-flex justify-content-between">
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-warning">Edit</a>
@@ -19,7 +25,5 @@
            onclick="return confirm('Are you sure you want to delete this workout?');">
             Delete
         </a>
-        
-       
     </div>
 </div>
