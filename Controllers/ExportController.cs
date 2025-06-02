@@ -3,21 +3,24 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using WorkoutDiaryMVC.Data;
+using System.IO;
+using System.Linq;
+using System;
 
 namespace WorkoutDiaryMVC.Controllers
 {
     public class ExportController : Controller
     {
-        private readonly WorkoutRepository _repo;
+        private readonly ApplicationDbContext _context;
 
-        public ExportController(WorkoutRepository repo)
+        public ExportController(ApplicationDbContext context)
         {
-            _repo = repo;
+            _context = context;
         }
 
         public IActionResult Pdf()
         {
-            var workouts = _repo.GetAll();
+            var workouts = _context.Workouts.ToList();
 
             var document = Document.Create(container =>
             {
@@ -28,35 +31,20 @@ namespace WorkoutDiaryMVC.Controllers
 
                     page.Content().Column(col =>
                     {
-                        // Naslov
-                        col.Item().AlignCenter().Text("Workout Report")
-                            .FontSize(20).Bold();
-
-                        // Datum generiranja
-                        col.Item().AlignRight().Text($"{DateTime.Now:dd.MM.yyyy HH:mm}")
-                            .FontSize(10).Italic();
-
+                        col.Item().AlignCenter().Text("Workout Report").FontSize(20).Bold();
+                        col.Item().AlignRight().Text($"{DateTime.Now:dd.MM.yyyy HH:mm}").FontSize(10).Italic();
                         col.Item().PaddingVertical(10);
+
                         int i = 1;
                         foreach (var workout in workouts)
                         {
-                            // Naslov + tip
-                            col.Item().Text($"{i++}. {workout.Name} ({workout.WorkoutType})")
-                                .FontSize(12).Bold();
-
-                            // Datum
-                            col.Item().Text($"Date: {workout.Date:dd.MM.yyyy}")
-                                .FontSize(10).Italic();
-
-                            col.Item().PaddingBottom(5); 
-                            //trajanje
-                            col.Item().Text($"Duration: {workout.DurationInMinutes} min")
-                                .FontSize(10);
-
+                            col.Item().Text($"{i++}. {workout.Name} ({workout.WorkoutType})").FontSize(12).Bold();
+                            col.Item().Text($"Date: {workout.Date:dd.MM.yyyy}").FontSize(10).Italic();
+                            col.Item().PaddingBottom(5);
+                            col.Item().Text($"Duration: {workout.DurationInMinutes} min").FontSize(10);
                             col.Item().PaddingBottom(5);
 
-                            // Description
-                            if (!string.IsNullOrEmpty(workout.Notes)) // dopušta i prazan razmak/enter
+                            if (!string.IsNullOrEmpty(workout.Notes))
                             {
                                 var lines = workout.Notes
                                     .Replace("è", "c").Replace("æ", "c")
@@ -64,27 +52,17 @@ namespace WorkoutDiaryMVC.Controllers
                                     .Replace("ð", "d")
                                     .Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
 
-                                bool hasVisibleContent = false;
-
                                 foreach (var line in lines)
                                 {
                                     if (string.IsNullOrWhiteSpace(line))
-                                    {
-                                        col.Item().PaddingVertical(5); // prazan red
-                                    }
+                                        col.Item().PaddingVertical(5);
                                     else
-                                    {
-                                        hasVisibleContent = true;
                                         col.Item().Text(line.Trim()).FontSize(10);
-                                    }
                                 }
                             }
 
-
-
-                                col.Item().PaddingBottom(8);
+                            col.Item().PaddingBottom(8);
                         }
-
                     });
                 });
             });
@@ -95,9 +73,10 @@ namespace WorkoutDiaryMVC.Controllers
 
             return File(pdfStream, "application/pdf", "WorkoutDiary.pdf");
         }
+
         public IActionResult PdfSingle(int id)
         {
-            var workout = _repo.GetById(id);
+            var workout = _context.Workouts.FirstOrDefault(w => w.Id == id);
             if (workout == null)
                 return NotFound();
 
@@ -110,25 +89,13 @@ namespace WorkoutDiaryMVC.Controllers
 
                     page.Content().Column(col =>
                     {
-                        col.Item().AlignCenter().Text($"{workout.Name}")
-                            .FontSize(20).Bold();
-
-                        col.Item().AlignRight().Text($"{DateTime.Now:dd.MM.yyyy}")
-                            .FontSize(10).Italic();
-
+                        col.Item().AlignCenter().Text($"{workout.Name}").FontSize(20).Bold();
+                        col.Item().AlignRight().Text($"{DateTime.Now:dd.MM.yyyy}").FontSize(10).Italic();
                         col.Item().PaddingVertical(10);
-
-                        col.Item().Text($"{workout.Name} ({workout.WorkoutType})")
-                            .FontSize(12).Bold();
-
-                        col.Item().Text($"Date: {workout.Date:dd.MM.yyyy}")
-                            .FontSize(10).Italic();
-
+                        col.Item().Text($"{workout.Name} ({workout.WorkoutType})").FontSize(12).Bold();
+                        col.Item().Text($"Date: {workout.Date:dd.MM.yyyy}").FontSize(10).Italic();
                         col.Item().PaddingBottom(5);
-
-                        col.Item().Text($"Duration: {workout.DurationInMinutes} min")
-                            .FontSize(10);
-
+                        col.Item().Text($"Duration: {workout.DurationInMinutes} min").FontSize(10);
                         col.Item().PaddingBottom(5);
 
                         if (!string.IsNullOrEmpty(workout.Notes))
@@ -142,13 +109,9 @@ namespace WorkoutDiaryMVC.Controllers
                             foreach (var line in lines)
                             {
                                 if (string.IsNullOrWhiteSpace(line))
-                                {
                                     col.Item().PaddingVertical(5);
-                                }
                                 else
-                                {
                                     col.Item().Text(line.Trim()).FontSize(10);
-                                }
                             }
                         }
 
@@ -163,6 +126,5 @@ namespace WorkoutDiaryMVC.Controllers
 
             return File(pdfStream, "application/pdf", $"Workout_{workout.Id}.pdf");
         }
-
     }
 }

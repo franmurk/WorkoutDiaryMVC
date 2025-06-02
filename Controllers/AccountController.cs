@@ -1,14 +1,22 @@
-
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using WorkoutDiaryMVC.Data;
+using WorkoutDiaryMVC.Models;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace WorkoutDiaryMVC.Controllers
 {
     public class AccountController : Controller
     {
-        private static readonly Dictionary<string, string> _users = new();
+        private readonly ApplicationDbContext _context;
+
+        public AccountController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
         public IActionResult Register() => View();
         public IActionResult Login() => View();
@@ -16,20 +24,31 @@ namespace WorkoutDiaryMVC.Controllers
         [HttpPost]
         public IActionResult Register(string username, string password)
         {
-            if (_users.ContainsKey(username))
+            if (_context.Users.Any(u => u.Username == username))
             {
                 ModelState.AddModelError("", "User already exists.");
                 return View();
             }
 
-            _users[username] = password;
+            var user = new User
+            {
+                Username = username,
+                PasswordHash = HashPassword(password)
+            };
+
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
             return RedirectToAction("Login");
         }
 
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
-            if (_users.TryGetValue(username, out var storedPassword) && storedPassword == password)
+            var hash = HashPassword(password);
+            var user = _context.Users.FirstOrDefault(u => u.Username == username && u.PasswordHash == hash);
+
+            if (user != null)
             {
                 var claims = new List<Claim> { new Claim(ClaimTypes.Name, username) };
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -47,6 +66,14 @@ namespace WorkoutDiaryMVC.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
+        }
+
+        private string HashPassword(string password)
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(password);
+            var hash = sha256.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
         }
     }
 }

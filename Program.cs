@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using WorkoutDiaryMVC.Data;
 using WorkoutDiaryMVC.Models;
 
@@ -15,7 +17,12 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Account/Login";
     });
 
-builder.Services.AddSingleton<WorkoutRepository>();
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+var cultureInfo = new CultureInfo("hr-HR");
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
 var app = builder.Build();
 
@@ -26,15 +33,6 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-using (var scope = app.Services.CreateScope())
-{
-    var repo = scope.ServiceProvider.GetRequiredService<WorkoutRepository>();
-
-    Console.WriteLine(">>> Singleton repo count BEFORE: " + repo.GetAll().Count);
-    
-    Console.WriteLine(">>> Singleton repo count AFTER: " + repo.GetAll().Count);
-}
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Workout}/{action=Index}/{id?}");
@@ -44,6 +42,5 @@ app.MapControllerRoute(
     pattern: "Calendar",
     defaults: new { controller = "Workout", action = "Calendar" }
 );
-
 
 app.Run();

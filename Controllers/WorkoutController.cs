@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using WorkoutDiaryMVC.Data;
@@ -10,21 +11,21 @@ namespace WorkoutDiaryMVC.Controllers
     [Authorize]
     public class WorkoutController : Controller
     {
-        private readonly WorkoutRepository _repo;
+        private readonly ApplicationDbContext _context;
 
-        public WorkoutController(WorkoutRepository repo)
+        public WorkoutController(ApplicationDbContext context)
         {
-            _repo = repo;
+            _context = context;
         }
 
         public IActionResult Index()
         {
             var today = DateTime.Today;
-            var all = _repo.GetAll();
+            var all = _context.Workouts.ToList();
+
             ViewData["WorkoutCount"] = all.Count;
             ViewData["TotalDuration"] = all.Sum(w => w.DurationInMinutes);
             ViewData["AverageDuration"] = all.Any() ? (int)all.Average(w => w.DurationInMinutes) : 0;
-
 
             var typeCounts = all
                 .GroupBy(w => w.WorkoutType)
@@ -66,22 +67,21 @@ namespace WorkoutDiaryMVC.Controllers
             });
         }
 
-
         [HttpPost]
         public IActionResult Create(Workout workout)
         {
             if (ModelState.IsValid)
             {
-                _repo.Add(workout);
+                _context.Workouts.Add(workout);
+                _context.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(workout);
         }
 
-
         public IActionResult Edit(int id)
         {
-            var workout = _repo.GetById(id);
+            var workout = _context.Workouts.FirstOrDefault(w => w.Id == id);
             return workout == null ? NotFound() : View(workout);
         }
 
@@ -90,7 +90,8 @@ namespace WorkoutDiaryMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                _repo.Update(workout);
+                _context.Workouts.Update(workout);
+                _context.SaveChanges();
                 return RedirectToAction("Index");
             }
 
@@ -99,7 +100,12 @@ namespace WorkoutDiaryMVC.Controllers
 
         public IActionResult Delete(int id)
         {
-            _repo.Delete(id);
+            var workout = _context.Workouts.FirstOrDefault(w => w.Id == id);
+            if (workout != null)
+            {
+                _context.Workouts.Remove(workout);
+                _context.SaveChanges();
+            }
             return RedirectToAction("Index");
         }
 
@@ -111,7 +117,7 @@ namespace WorkoutDiaryMVC.Controllers
         [HttpGet]
         public JsonResult GetEvents()
         {
-            var workouts = _repo.GetAll();
+            var workouts = _context.Workouts.ToList();
 
             var events = workouts.Select(w => new
             {
@@ -126,17 +132,16 @@ namespace WorkoutDiaryMVC.Controllers
 
         public IActionResult All()
         {
-            var allWorkouts = _repo.GetAll();
+            var allWorkouts = _context.Workouts.ToList();
             return View(allWorkouts);
         }
 
-
         private string GetColorByType(string type) => type?.ToLower() switch
         {
-            "cardio" => "#007bff",      // plava
-            "strength" => "#dc3545",    // crvena
-            "endurance" => "#28a745", // zelena
-            _ => "#6f42c1"              // ljubičasta za Other
+            "cardio" => "#007bff",
+            "strength" => "#dc3545",
+            "endurance" => "#28a745",
+            _ => "#6f42c1"
         };
     }
 }

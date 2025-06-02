@@ -2,6 +2,7 @@
 @model List<WorkoutDiaryMVC.Models.ProgressEntry>
 
 @{
+    Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Progress Chart";
 
     var grouped = Model.GroupBy(e => e.Exercise);
@@ -33,10 +34,15 @@
         colorIndex++;
     }
 }
+<div class="mb-4">
+    <a href="/PersonalBest/Records" class="btn btn-primary">
+        ← Back
+    </a>
+</div>
+<h2 class="fw-bold mb-4">Progress Chart</h2>
 
-<h2 class="mb-4">Progress Chart</h2>
 <div style="max-width: 800px; margin: 0 auto;">
-    <canvas id="progressChart" height="400"></canvas>
+    <canvas id="progressChart" style="aspect-ratio: 2 / 1; width: 100%;"></canvas>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -52,6 +58,8 @@
         data: chartData,
         options: {
             responsive: true,
+            maintainAspectRatio: true,
+
             interaction: {
                 mode: 'nearest',
                 axis: 'x',
