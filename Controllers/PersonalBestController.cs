@@ -1,19 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WorkoutDiaryMVC.Data;
 using WorkoutDiaryMVC.Models;
 
 namespace WorkoutDiaryMVC.Controllers
 {
     public class PersonalBestController : Controller
     {
-        private static List<PersonalBest> _records = new();
+        private readonly WorkoutRepository _repository;
+
+        public PersonalBestController(WorkoutRepository repository)
+        {
+            _repository = repository;
+        }
 
         public IActionResult Records()
         {
-            return View("Records", _records);
+            var records = _repository.GetPersonalBests();
+            return View("Records", records);
         }
+
         public IActionResult Create()
         {
             return View();
+        }
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            _repository.DeletePersonalBest(id);
+            return RedirectToAction("Records");
         }
 
         [HttpPost]
@@ -21,53 +35,27 @@ namespace WorkoutDiaryMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                pb.Id = _records.Any() ? _records.Max(p => p.Id) + 1 : 1;
-                _records.Add(pb);
+                var entry = new ProgressEntry
+                {
+                    Exercise = pb.Exercise,
+                    Weight = (float)pb.MaxWeight,
+                    Date = pb.Date
+                };
+
+                _repository.AddProgressEntry(entry);
+
                 return RedirectToAction("Records");
             }
 
             return View(pb);
+
         }
-
-        public IActionResult Edit(int id)
+        public IActionResult ProgressChart()
         {
-            var record = _records.FirstOrDefault(p => p.Id == id);
-            if (record == null) return NotFound();
-
-            return View(record);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(PersonalBest updated)
-        {
-            var existing = _records.FirstOrDefault(p => p.Id == updated.Id);
-            if (existing == null) return NotFound();
-
-            if (ModelState.IsValid)
-            {
-                existing.Exercise = updated.Exercise;
-                existing.MaxWeight = updated.MaxWeight;
-                existing.Reps = updated.Reps;
-                existing.Date = updated.Date;
-
-                return RedirectToAction("Records");
-            }
-
-            return View(updated);
-        }
-
-        [HttpPost]
-        public IActionResult Delete(int id)
-        {
-            var record = _records.FirstOrDefault(p => p.Id == id);
-            if (record != null)
-            {
-                _records.Remove(record);
-            }
-
-            return RedirectToAction("Records");
+            var entries = _repository.GetProgressEntries();
+            return View(entries);
         }
 
     }
-}
 
+}

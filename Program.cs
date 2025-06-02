@@ -31,25 +31,6 @@ using (var scope = app.Services.CreateScope())
     var repo = scope.ServiceProvider.GetRequiredService<WorkoutRepository>();
 
     Console.WriteLine(">>> Singleton repo count BEFORE: " + repo.GetAll().Count);
-
-    //if (!repo.GetAll().Any())
-    //{
-        //repo.Add(new Workout
-        //{
-           // Name = "TEST: Push Day",
-         //   Date = DateTime.Today,
-        //    Notes = "Chest and triceps"
-       // });
-
-        //repo.Add(new Workout
-        //{
-            //Name = "TEST: Pull Day",
-            //Date = DateTime.Today.AddDays(2),
-          //  Notes = "Back and biceps"
-        //});
-
-      //  Console.WriteLine(">>> Test workouts added.");
-    //}
     
     Console.WriteLine(">>> Singleton repo count AFTER: " + repo.GetAll().Count);
 }

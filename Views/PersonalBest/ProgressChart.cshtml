@@ -1,0 +1,95 @@
+﻿@using System.Text.Json
+@model List<WorkoutDiaryMVC.Models.ProgressEntry>
+
+@{
+    ViewData["Title"] = "Progress Chart";
+
+    var grouped = Model.GroupBy(e => e.Exercise);
+
+    string GetHslColor(int index, int total) =>
+        $"hsl({(index * 360 / total) % 360}, 70%, 50%)";
+
+    var datasets = new List<object>();
+    int totalGroups = grouped.Count();
+    int colorIndex = 0;
+
+    foreach (var group in grouped)
+    {
+        datasets.Add(new
+        {
+            label = group.Key,
+            data = group.OrderBy(e => e.Date).Select(e => new
+            {
+                x = e.Date.ToString("yyyy-MM-dd"),
+                y = e.Weight
+            }),
+            borderColor = GetHslColor(colorIndex, totalGroups),
+            backgroundColor = "transparent",
+            tension = 0.3,
+            fill = false,
+            spanGaps = false
+        });
+
+        colorIndex++;
+    }
+}
+
+<h2 class="mb-4">Progress Chart</h2>
+<div style="max-width: 800px; margin: 0 auto;">
+    <canvas id="progressChart" height="400"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+<script>
+    const chartData = {
+        datasets: @Html.Raw(JsonSerializer.Serialize(datasets))
+    };
+
+    const config = {
+        type: 'line',
+        data: chartData,
+        options: {
+            responsive: true,
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: true
+            },
+            plugins: {
+                tooltip: {
+                    enabled: true
+                },
+                legend: {
+                    position: 'top'
+                }
+            },
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day',
+                        tooltipFormat: 'dd-MM-yyyy'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Weight (kg)'
+                    }
+                }
+            }
+        }
+    };
+
+    new Chart(
+        document.getElementById('progressChart'),
+        config
+    );
+</script>

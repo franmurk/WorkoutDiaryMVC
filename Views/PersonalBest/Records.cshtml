@@ -7,7 +7,7 @@
 
 <h2 class="fw-bold mb-4">Personal Best Records</h2>
 
-<a href="/PersonalBest/Create" class="btn btn-primary mb-3">+ Add Personal Best</a>
+<a href="/PersonalBest/Create" class="btn btn-primary mb-3">+ Add New Personal Best</a>
 
 <div class="d-flex">
     <table class="table table-hover table-bordered w-75">
@@ -15,7 +15,6 @@
             <tr>
                 <th>Exercise</th>
                 <th>Max Weight (kg)</th>
-                <th>Reps</th>
                 <th>Date</th>
             </tr>
         </thead>
@@ -25,7 +24,6 @@
                 <tr>
                     <td>@best.Exercise</td>
                     <td>@best.MaxWeight</td>
-                    <td>@best.Reps</td>
                     <td>@best.Date.ToString("dd.MM.yyyy")</td>
                 </tr>
             }
@@ -37,11 +35,13 @@
         @foreach (var best in Model)
         {
             <div class="mb-3">
-                <a asp-action="Edit" asp-route-id="@best.Id" class="btn btn-sm btn-primary me-1">Edit</a>
                 <form asp-action="Delete" asp-route-id="@best.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this record?');">
                     <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                 </form>
             </div>
         }
     </div>
+  
+
 </div>
+<a class="btn btn-primary mt-3" href="/PersonalBest/ProgressChart">Prikaži graf napretka</a>
