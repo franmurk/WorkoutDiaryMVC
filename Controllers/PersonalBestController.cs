@@ -2,9 +2,11 @@
 using WorkoutDiaryMVC.Data;
 using WorkoutDiaryMVC.Models;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WorkoutDiaryMVC.Controllers
 {
+    [Authorize]
     public class PersonalBestController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -16,7 +18,10 @@ namespace WorkoutDiaryMVC.Controllers
 
         public IActionResult Records()
         {
-            var records = _context.PersonalBests.ToList();
+            var currentUser = User.Identity?.Name;
+            var records = _context.PersonalBests
+                                  .Where(pb => pb.Username == currentUser)
+                                  .ToList();
             return View("Records", records);
         }
 
@@ -28,12 +33,16 @@ namespace WorkoutDiaryMVC.Controllers
         [HttpPost]
         public IActionResult Create(PersonalBest pb)
         {
-            if (ModelState.IsValid)
+            var currentUser = User.Identity?.Name;
+
+            if (ModelState.IsValid && currentUser != null)
             {
-                var existing = _context.PersonalBests.FirstOrDefault(x => x.Exercise == pb.Exercise);
+                var existing = _context.PersonalBests
+                    .FirstOrDefault(x => x.Exercise == pb.Exercise && x.Username == currentUser);
 
                 if (existing == null)
                 {
+                    pb.Username = currentUser;
                     _context.PersonalBests.Add(pb);
                 }
                 else if (pb.MaxWeight > existing.MaxWeight)
@@ -47,7 +56,8 @@ namespace WorkoutDiaryMVC.Controllers
                 {
                     Exercise = pb.Exercise,
                     Weight = (float)pb.MaxWeight,
-                    Date = pb.Date
+                    Date = pb.Date,
+                    Username = currentUser
                 };
 
                 _context.ProgressEntries.Add(progress);
@@ -62,7 +72,9 @@ namespace WorkoutDiaryMVC.Controllers
         [HttpPost]
         public IActionResult Delete(int id)
         {
-            var record = _context.PersonalBests.FirstOrDefault(x => x.Id == id);
+            var currentUser = User.Identity?.Name;
+            var record = _context.PersonalBests
+                                 .FirstOrDefault(x => x.Id == id && x.Username == currentUser);
             if (record != null)
             {
                 _context.PersonalBests.Remove(record);
@@ -74,7 +86,10 @@ namespace WorkoutDiaryMVC.Controllers
 
         public IActionResult ProgressChart()
         {
-            var entries = _context.ProgressEntries.ToList();
+            var currentUser = User.Identity?.Name;
+            var entries = _context.ProgressEntries
+                                  .Where(e => e.Username == currentUser)
+                                  .ToList();
             return View(entries);
         }
     }

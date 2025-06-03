@@ -20,8 +20,12 @@ namespace WorkoutDiaryMVC.Controllers
 
         public IActionResult Index()
         {
+            var currentUser = User.Identity?.Name;
             var today = DateTime.Today;
-            var all = _context.Workouts.ToList();
+
+            var all = _context.Workouts
+                              .Where(w => w.Username == currentUser)
+                              .ToList();
 
             ViewData["WorkoutCount"] = all.Count;
             ViewData["TotalDuration"] = all.Sum(w => w.DurationInMinutes);
@@ -70,8 +74,11 @@ namespace WorkoutDiaryMVC.Controllers
         [HttpPost]
         public IActionResult Create(Workout workout)
         {
-            if (ModelState.IsValid)
+            var currentUser = User.Identity?.Name;
+
+            if (ModelState.IsValid && currentUser != null)
             {
+                workout.Username = currentUser;
                 _context.Workouts.Add(workout);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
@@ -81,26 +88,43 @@ namespace WorkoutDiaryMVC.Controllers
 
         public IActionResult Edit(int id)
         {
-            var workout = _context.Workouts.FirstOrDefault(w => w.Id == id);
+            var currentUser = User.Identity?.Name;
+            var workout = _context.Workouts
+                                  .FirstOrDefault(w => w.Id == id && w.Username == currentUser);
+
             return workout == null ? NotFound() : View(workout);
         }
 
         [HttpPost]
         public IActionResult Edit(Workout workout)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Workouts.Update(workout);
-                _context.SaveChanges();
-                return RedirectToAction("Index");
-            }
+            var currentUser = User.Identity?.Name;
 
-            return View(workout);
+            if (!ModelState.IsValid || currentUser == null)
+                return View(workout);
+
+            var existingWorkout = _context.Workouts.FirstOrDefault(w => w.Id == workout.Id && w.Username == currentUser);
+
+            if (existingWorkout == null)
+                return NotFound();
+
+            existingWorkout.Name = workout.Name;
+            existingWorkout.Notes = workout.Notes;
+            existingWorkout.Date = workout.Date;
+            existingWorkout.DurationInMinutes = workout.DurationInMinutes;
+            existingWorkout.WorkoutType = workout.WorkoutType;
+
+            _context.SaveChanges();
+            return RedirectToAction("Index");
         }
+
 
         public IActionResult Delete(int id)
         {
-            var workout = _context.Workouts.FirstOrDefault(w => w.Id == id);
+            var currentUser = User.Identity?.Name;
+            var workout = _context.Workouts
+                                  .FirstOrDefault(w => w.Id == id && w.Username == currentUser);
+
             if (workout != null)
             {
                 _context.Workouts.Remove(workout);
@@ -117,7 +141,10 @@ namespace WorkoutDiaryMVC.Controllers
         [HttpGet]
         public JsonResult GetEvents()
         {
-            var workouts = _context.Workouts.ToList();
+            var currentUser = User.Identity?.Name;
+            var workouts = _context.Workouts
+                                   .Where(w => w.Username == currentUser)
+                                   .ToList();
 
             var events = workouts.Select(w => new
             {
@@ -132,7 +159,11 @@ namespace WorkoutDiaryMVC.Controllers
 
         public IActionResult All()
         {
-            var allWorkouts = _context.Workouts.ToList();
+            var currentUser = User.Identity?.Name;
+            var allWorkouts = _context.Workouts
+                                      .Where(w => w.Username == currentUser)
+                                      .ToList();
+
             return View(allWorkouts);
         }
 

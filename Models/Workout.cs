@@ -4,6 +4,8 @@ namespace WorkoutDiaryMVC.Models
 {
     public class Workout
     {
+        public string Username { get; set; } = "";
+
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Name is required.")]
