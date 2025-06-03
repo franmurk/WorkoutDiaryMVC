@@ -39,8 +39,10 @@ namespace WorkoutDiaryMVC.Controllers
             _context.Users.Add(user);
             _context.SaveChanges();
 
+            TempData["RegistrationSuccess"] = "Registration Success.";
             return RedirectToAction("Login");
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
